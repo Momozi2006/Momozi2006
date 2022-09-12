@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./matter.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        div {
+            position: absolute;
+            width: 25%;
+            height: 0%;
+            background-color: rgba(255, 255, 255, .6);
+            border-radius: 10px;
+            font-size: 48px;
+            text-align: center;
+            padding-top: 1%;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all .3s;
+            overflow: hidden;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div>鼠标左键可以<br>进行控制
+        <button>确定</button>
+    </div> -->
+    <script>
+        window.onload = function () {
+            let div = document.querySelector('div');
+            let btn = document.querySelector('button');
+            div.style.height = '25%';
+
+            // btn.onclick = function () {
+            //     div.style.height = '0%';
+            //     div.style.padding = '0';
+            // }
+
+
+            let Engine = Matter.Engine;
+            let Render = Matter.Render;
+            let World = Matter.World;
+            let Bodies = Matter.Bodies;
+
+            let engine = Engine.create();
+            let render = Render.create({
+                element: document.body,
+                engine: engine,
+                options: {
+                    background: '#76BAFE',
+                    wireframes: false,
+                }
+            })
+
+            let Composite = Matter.Composite;
+            let MouseConstraint = Matter.MouseConstraint;
+            let Mouse = Matter.Mouse;
+
+            let canvas = document.querySelector('canvas');
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+
+
+            let roundA = Bodies.circle(666, 100, 50, {
+                restitution: 1.5,
+            })
+            let boxA = Bodies.rectangle(666, 150, 200, 200, {
+                restitution: 1.5,
+                render: {
+                    sprite: {
+                        texture: './qq头像.png'
+                    }
+                }
+            })
+            World.add(engine.world, [roundA, boxA]);
+
+            let ground = Bodies.rectangle(innerWidth / 2, 900, innerWidth, 50, { isStatic: true });
+            World.add(engine.world, [ground]);
+
+            Engine.run(engine);
+            Render.run(render);
+
+            let mouse = Mouse.create(render.canvas);
+            let mouseConstraint = MouseConstraint.create(engine, {
+                mouse: mouse,
+                constraint: {
+                    stiffness: 0.2,
+                    render: {
+                        visible: false
+                    }
+                }
+            })
+            Composite.add(engine.world, mouseConstraint);
+            render.mouse = mouse;
+        }
+    </script>
+</body>
+
+</html>
