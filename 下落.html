@@ -11,52 +11,13 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        div {
-            position: absolute;
-            width: 25%;
-            height: 0%;
-            background-color: rgba(255, 255, 255, .6);
-            border-radius: 10px;
-            font-size: 48px;
-            text-align: center;
-            padding-top: 1%;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            transition: all .3s;
-            overflow: hidden;
-        }
-
-        button {
-            display: block;
-            margin: 20px auto;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-    <!-- <div>鼠标左键可以<br>进行控制
-        <button>确定</button>
-    </div> -->
     <script>
         window.onload = function () {
-            let div = document.querySelector('div');
-            let btn = document.querySelector('button');
-            div.style.height = '25%';
-
-            // btn.onclick = function () {
-            //     div.style.height = '0%';
-            //     div.style.padding = '0';
-            // }
-
-
             let Engine = Matter.Engine;
             let Render = Matter.Render;
             let World = Matter.World;
@@ -67,8 +28,14 @@
                 element: document.body,
                 engine: engine,
                 options: {
-                    background: '#76BAFE',
-                    wireframes: false,
+                    pixelRatio: 1, // 设置像素比 这个关系到性能
+                    background: '#76BAFE', // 设置全局背景颜色
+                    // 要设置背景颜色需要将线框模式为关
+                    wireframes: false, // 线框模式
+
+                    // wireframeBackground: '#222'  线框模式时背景色
+                    // 要设置线框颜色需要打开线框模式
+                    // 但是打开之后就不能设置全局背景颜色了
                 }
             })
 
@@ -81,20 +48,27 @@
             canvas.height = innerHeight;
 
 
-            let roundA = Bodies.circle(666, 100, 50, {
-                restitution: 1.5,
+            let roundA = Bodies.circle(100, 100, 50, {
+                density: .68, // 设置密度
+                restitution: 1.5, // 设置弹力
+                render: {
+                    sprite: {
+                        texture: '月饼.png'
+                    }
+                }
             })
-            let boxA = Bodies.rectangle(666, 150, 200, 200, {
+            let boxA = Bodies.rectangle(100, 150, 200, 200, {
+                density: 1,
                 restitution: 1.5,
                 render: {
                     sprite: {
-                        texture: './qq头像.png'
+                        texture: 'qq头像.png'
                     }
                 }
             })
             World.add(engine.world, [roundA, boxA]);
 
-            let ground = Bodies.rectangle(innerWidth / 2, 900, innerWidth, 50, { isStatic: true });
+            let ground = Bodies.rectangle(innerWidth / 2, innerHeight - 30, innerWidth * 2, 50, { isStatic: true });
             World.add(engine.world, [ground]);
 
             Engine.run(engine);
@@ -113,6 +87,7 @@
             Composite.add(engine.world, mouseConstraint);
             render.mouse = mouse;
         }
+
     </script>
 </body>
 
